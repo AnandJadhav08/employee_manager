@@ -85,13 +85,12 @@ This application solves these issues with:
 # 📁 Project Structure
 
 ```
-EmployeeManagementSystem/
+employee_manager/
 │
-├── app.py              # Main Tkinter + MongoDB application
-├── requirements.txt    # Dependencies
+├── .gitignore             
+├── Requirement.txt   # Dependencies Document                (Optional Requirement.txt)
 ├── README.md           # Project documentation
-└── assets/
-    └── icons/          # (Optional)
+└── new_emp_manage.py.  # # Main Tkinter + MongoDB application
 ```
 
 ---
