@@ -1,236 +1,197 @@
-﻿# 🚀 Employee Management System (Python + Tkinter + MongoDB Atlas)
+# 🚀 Employee Management System (Python + Tkinter + MongoDB)
 
-A desktop-based **Employee Management System** built using **Python Tkinter**, **MongoDB Atlas**, and **ReportLab**.  
-This application allows administrators to manage employee data, generate salary bills, export reports, and enforce secure authentication with bcrypt hashing.
+A desktop-based **Employee Management System** built with **Python**, **Tkinter**, and **MongoDB Atlas**, organized following the **MVC (Model-View-Controller)** pattern with built-in security practices.
 
----
-
-## 📌 Problem Statement
-
-Organizations often struggle with:
-
-- Managing employee records: storing, updating, and deleting data.
-- Tracking salary/payment details.
-- Generating bills or salary slips.
-- Maintaining secure user authentication.
-- Using outdated or manual systems like Excel sheets.
-- Lack of a centralized cloud-backed database to prevent data loss.
-
-There is a need for a **simple, secure, desktop-based system** that manages all employee information in one place.
+> **Authors:** Anand and Payal  
+> **Repository:** [AnandJadhav08/employee_manager](https://github.com/AnandJadhav08/employee_manager)
 
 ---
 
-## ✅ Solution: This Employee Management System
+## 🔒 Security Best Practices & Design
 
-This application solves these issues with:
+This project adheres to strict security standards to ensure credentials and data are protected:
 
-- A clean, functional **Tkinter UI**
-- **MongoDB Atlas** for secure cloud data storage
-- **bcrypt hashing** for password security
-- **ReportLab-generated PDF bills**
-- Full CRUD operations (Create, Read, Update, Delete)
-- Employee salary management
-- Dashboard to view all employees in a Treeview table
+1. **Zero Secret Exposure in Version Control:**
+   - Real connection strings, passwords, and API keys are **never** committed to Git.
+   - `.env` is strictly ignored by `.gitignore`.
+   - `.env.example` is provided as a sanitized template.
 
----
+2. **Secure Password Storage:**
+   - User credentials in the database are hashed with **`bcrypt`** using unique, randomized salts (`gensalt()`).
+   - Passwords are never stored, logged, or retrieved in plain text.
 
-## ✨ Features
+3. **In-App Credential Masking:**
+   - Database connection strings displayed in the Settings UI are masked (e.g. `mongodb+srv://<user>:********@cluster...`) to prevent credential leakage during screen sharing or demos.
 
-### 🔐 Authentication System
-- Register new admin users  
-- Login securely (password hashed with bcrypt)  
-- Password confirmation and validation  
-- Forgot password placeholder  
-
-### 👨‍💼 Employee Management
-- Add new employees  
-- Update employee details  
-- Delete employees  
-- View employees in an interactive table  
-- Auto-fill details when selecting a table row  
-
-### 💰 Salary & Billing
-- Generate salary bills  
-- Auto-generated Record IDs  
-- PDF bills using ReportLab  
-
-### 📜 Data Storage
-- Uses **MongoDB Atlas**  
-- Collections:  
-  - `login_app` (users)  
-  - `Employee_table` (employee records)  
+4. **Principle of Least Privilege:**
+   - Database user roles in MongoDB Atlas should be limited to application databases (`user_auth_db`, `employee_management`).
 
 ---
 
-# 🛠️ Tech Stack
+## 📁 Project Structure
 
-### Frontend / UI
-- Python Tkinter  
-- ttkbootstrap (optional)  
-
-### Backend
-- Python 3.10+  
-- MongoDB Atlas  
-- bcrypt  
-
-### PDF Generation
-- ReportLab  
-
-### Libraries
-- pymongo  
-- pillow  
-- datetime  
-- tkinter.ttk  
-
-# 📁 Project Structure
-
-```
-employee_manager/
-│
-├── .gitignore             
-├── Requirement.txt   # Dependencies Document                (Optional Requirement.txt)
-├── README.md           # Project documentation
-└── new_emp_manage.py.  # # Main Tkinter + MongoDB application
+```text
+.
+├── README.md                   # Single central documentation file
+└── employee_manager/
+    ├── main.py                 # Application entry point (MVC)
+    ├── requirements.txt        # Python dependencies
+    ├── .env.example            # Sanitized template for environment variables
+    ├── .env                    # Local secret config (DB_URL - NEVER commit)
+    ├── .gitignore              # Gitignore rules for secrets, venv, and caches
+    ├── SECURITY_REPORT.md      # Security audit and verification report
+    │
+    ├── app/                    # MVC Application Package
+    │   ├── models/             # Database connection & models
+    │   │   ├── database.py     # MongoDB connection loader (reads DB_URL from .env)
+    │   │   ├── employee_model.py # Employee CRUD operations & aggregation
+    │   │   └── user_model.py   # User authentication & bcrypt hashing
+    │   │
+    │   ├── controllers/        # Business logic
+    │   │   ├── auth_controller.py     # Authentication & password strength validation
+    │   │   └── employee_controller.py # Employee business logic, search, export & reports
+    │   │
+    │   └── views/              # UI Components (Tkinter)
+    │       ├── auth_view.py    # Welcome, Login, Register, Forgot Password
+    │       ├── dashboard_view.py # Main dashboard with sidebar & statistics
+    │       ├── employee_view.py # Employee form & data table (CRUD)
+    │       ├── search_view.py  # Search dialogue
+    │       ├── export_view.py  # CSV / PDF export preview
+    │       ├── reports_view.py # Analytics & distribution reports
+    │       └── settings_view.py # Masked DB connection info & themes
+    │
+    └── new_emp_manage.py       # Legacy single-file version (reference)
 ```
 
 ---
 
-# ⚙️ Setup & Installation (Using uv)
+## ⚙️ How to Setup and Run
 
-This project uses **uv**, a fast Python environment + package manager.
+### 1. Prerequisites
+- **Python 3.10 to 3.13** installed on your system.
+- A **MongoDB Atlas** account (or local MongoDB server).
 
 ---
 
-## 1️⃣ Install uv
+### 2. Navigate to the Project
 
-```sh
-pip install uv
+Open your terminal in the project directory:
+
+```bash
+cd employee_manager
 ```
 
 ---
 
-## 2️⃣ Create virtual environment
+### 3. Create & Activate Virtual Environment
 
-```sh
-uv venv
+Keep dependencies isolated to prevent system conflicts:
+
+**Windows (PowerShell / Command Prompt):**
+```powershell
+python -m venv .venv
+.\.venv\Scripts\activate
 ```
 
----
-
-## 3️⃣ Activate environment
-
-### Windows
-```sh
-.\.venv\Scriptsctivate
+*Note: If PowerShell displays a script restriction error, run:*
+```powershell
+Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### macOS / Linux
-```sh
+**macOS / Linux:**
+```bash
+python3 -m venv .venv
 source .venv/bin/activate
 ```
 
 ---
 
-## 4️⃣ Install dependencies
+### 4. Install Dependencies
 
-```sh
-uv pip install -r requirements.txt
+Install the required packages from `requirements.txt`:
+
+```bash
+pip install -r requirements.txt
 ```
 
-If needed, create `requirements.txt`:
+Packages installed:
+- `pymongo>=4.6.0` (MongoDB driver)
+- `bcrypt>=4.0.1` (Password hashing)
+- `pandas>=2.0.0` (Data processing & reports)
+- `reportlab>=4.0.0` (PDF generation)
+- `python-dotenv>=1.0.0` (Environment variable management)
 
-```
-pymongo
-reportlab
-pillow
-bcrypt
-ttkbootstrap
+---
+
+### 5. Configure Secrets (`.env`)
+
+> ⚠️ **CRITICAL SECURITY RULE:** Never put real passwords in `main.py`, `.env.example`, or any tracked file. Always use a local `.env`.
+
+1. **Create your `.env` file from `.env.example`:**
+   - **Windows:**
+     ```cmd
+     copy .env.example .env
+     ```
+   - **macOS / Linux:**
+     ```bash
+     cp .env.example .env
+     ```
+
+2. **Configure your MongoDB Atlas Connection String:**
+   - In MongoDB Atlas, go to **Database Access** and create a database user with password.
+   - Under **Network Access**, add your current IP address (or `0.0.0.0/0` for initial testing).
+   - Under **Clusters > Connect > Drivers > Python**, copy the connection string.
+   - Open `.env` and fill in your connection string:
+     ```env
+     DB_URL=mongodb+srv://<username>:<password>@cluster0.xxxxx.mongodb.net/
+     ```
+     *(Replace `<username>` and `<password>` with your database user credentials. If your password contains special characters like `@` or `:`, URL-encode them).*
+
+---
+
+### 6. Run the Application
+
+Launch the application using:
+
+```bash
+python main.py
 ```
 
 ---
 
-## 5️⃣ Run the Application
+## 🧭 First-Time Usage Guide
 
-```sh
-uv run app.py
-```
-
----
-
-# 🗄️ MongoDB Atlas Setup
-
-## 1️⃣ Create a Free Atlas Account  
-https://www.mongodb.com/cloud/atlas
-
-## 2️⃣ Create a Cluster (Free M0)
-
-## 3️⃣ Add Database User  
-- **Username:** python_user  
-- **Password:** yourPassword  
-- **Role:** Read/Write Any Database  
-
-## 4️⃣ Add IP Address  
-Allow access from anywhere:
-
-```
-0.0.0.0/0
-```
-
-## 5️⃣ Get the Connection String
-
-Example:
-
-```
-mongodb+srv://<username>:<password>@cluster0.mongodb.net/
-```
-
-## 6️⃣ Add to Your Code
-
-```python
-client = pymongo.MongoClient(
-    "mongodb+srv://python_user:yourPassword@cluster0.mongodb.net/")
-```
+1. **Register Admin:**
+   - On the Welcome screen, click **Register**.
+   - Enter your email and a strong password (minimum 6 characters, must include at least 1 number and 1 special character).
+   - Click **Submit**. Your password is salted and hashed with `bcrypt` before storage.
+2. **Log In:**
+   - Click **Admin** on the welcome screen.
+   - Enter your registered email and password to access the Dashboard.
+3. **Use Modules:**
+   - **Employee Menu:** Add, update, delete, and view employee records.
+   - **Search:** Search across multiple fields.
+   - **Export:** Export data to CSV or generate PDF salary bills.
+   - **Reports:** View department, status, age, and experience analytics.
+   - **Settings:** Check masked DB connection and toggle themes.
 
 ---
 
-# 📦 Environment Variables (Recommended)
+## 🛡️ Pre-Push Security Checklist
 
-Create `.env`:
+Before running `git commit` or `git push`:
 
-```
-MONGO_URI="mongodb+srv://user:pass@cluster.mongodb.net/"
-```
-
-Load it using:
-
-```python
-from dotenv import load_dotenv
-load_dotenv()
-import os
-
-MONGO_URI = os.getenv("MONGO_URI")
-```
+- [ ] Run `git status` — ensure `.env` is **NOT** listed.
+- [ ] Run `git diff` — confirm no passwords, connection strings, or personal secrets are present in any modified files.
+- [ ] Verify that only `.env.example` (with dummy placeholders) is committed.
 
 ---
 
-# ▶️ How to Use the Application
+## ❓ Common Troubleshooting
 
-1. Run the program  
-2. Register an admin (first launch)  
-3. Login  
-4. Go to Employee menu  
-5. Add/Update/Delete employees  
-6. Generate PDF salary bills  
-7. View employees in the dashboard table  
-
----
-
-# 📌 Future Improvements
-
-- Light/Dark themes  
-- Export to Excel/CSV  
-- Search & Filter employees  
-- Attendance module  
-- QR-based salary slips  
-- Multi-role accounts (Admin/HR/Finance)  
-
+| Issue | Cause & Solution |
+|---|---|
+| `ValueError: DB_URL is not set` | Missing `.env` file in `employee_manager/`. Copy `.env.example` to `.env` and define `DB_URL`. |
+| `ServerSelectionTimeoutError` | MongoDB Atlas IP access issue. Check **Network Access** in Atlas to whitelist your current IP address. |
+| `Authentication failed` | Incorrect MongoDB user or password in `DB_URL`. Special characters in passwords must be URL-encoded. |
+| `No module named '_tkinter'` (Linux) | Install Tkinter on Linux via `sudo apt-get install python3-tk`. |
