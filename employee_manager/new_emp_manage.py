@@ -17,16 +17,16 @@ import bcrypt
 import datetime
 import csv
 import pandas as pd
+import threading
 from reportlab.lib import colors
 from reportlab.lib.pagesizes import letter
 from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph
 from reportlab.lib.styles import getSampleStyleSheet
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 import os
 
-# load_dotenv()
-
-# db_url = os.getenv("DB_URL")
+load_dotenv()
+db_url = os.getenv("DB_URL")
 
 # MongoDB Connection
 client = MongoClient('db_url')
